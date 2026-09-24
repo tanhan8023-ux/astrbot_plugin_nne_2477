@@ -63,7 +63,11 @@ class AlivePersonaPlugin(Star):
         self.emotions: dict[str, EmotionSystem] = {}
         self.emotion_last_seen: dict[str, float] = {}
         self.memory = MemorySystem(self.data_dir)
-        self.persona = PersonaEngine(self.data_dir, config=config or {})
+
+        # 这是诺奈专属副本：启动时固定加载诺奈人设，避免旧私有人设覆盖。
+        dedicated_config = dict(config or {})
+        dedicated_config['persona_file'] = 'persona_nne_2477.json'
+        self.persona = PersonaEngine(self.data_dir, config=dedicated_config)
         self.living_state = LivingState()
         self.persona_style = PersonaStyleState(
             trait_anchor_rate=float(self.persona.persona.get('trait_anchor_rate', 0.35)),

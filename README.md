@@ -14,33 +14,18 @@ AstrBot 活人感人设插件，当前默认人设为 **诺奈 NNE-2477**。
 
 ## 人设文件
 
-默认人设在：
+这是诺奈 NNE-2477 的专属插件。
 
-```text
-data/persona.json
-```
-
-如果你在本地放了：
-
-```text
-data/persona_private.json
-```
-
-插件会优先读取 `persona_private.json`，没有这个文件才读取 `persona.json`。
-
-本仓库内置诺奈的专属人设文件：
+插件启动时会固定加载：
 
 ```text
 data/persona_nne_2477.json
 ```
 
-它对应“诺奈 NNE-2477”人设；复制版已将它作为默认 `data/persona.json`。如需切换其他人设，仍可使用以下方式：
+因此，直接安装并启用这个插件，就会使用诺奈的人设；不会被旧的
+`persona_private.json`、`persona.json` 或环境变量覆盖。
 
-1. 在 AstrBot 插件配置里设置 `persona_file` 为 `persona_nne_2477.json`。
-2. 或将它复制为 `data/persona_private.json`，作为当前实例的私有人设。
-
-配置项优先级为：`persona_file`、环境变量 `ALIVE_PERSONA_FILE`、`persona_private.json`、`persona.json`。
-
+`data/persona.json` 仅作为同内容备份保留。想使用其他人设时，请安装原版活人感插件，不要修改这个诺奈专属副本。
 ## 常用配置
 
 - `name`: 角色名字
@@ -70,4 +55,3 @@ data/persona_nne_2477.json
 - 会话情绪隔离：不同群聊不会互相污染心情
 - 记忆去重与清除：重复事实会合并，可用 `/forget` 清除自己的长期记忆
 - 技术回复自适应长度：排查问题时不会套用闲聊的短回复限制
-
