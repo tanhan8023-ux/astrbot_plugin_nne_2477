@@ -1,0 +1,5 @@
+data/memory.json
+data/persona_*.json
+!data/persona_nne_2477.json
+*.pyc
+__pycache__/
