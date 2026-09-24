@@ -1,7 +1,7 @@
 """
-AstrBot 活人感插件 - 主入口
+AstrBot 诺奈 NNE-2477 专属活人感插件 - 主入口
 
-整合情绪系统、记忆系统、人设引擎、随机行为，
+整合诺奈人设、情绪系统、记忆系统和随机行为，
 通过 AstrBot 的 LLM 钩子注入活人感 system prompt。
 
 功能:
@@ -9,7 +9,7 @@ AstrBot 活人感插件 - 主入口
   2. 拦截 LLM 回复，用随机行为修饰
   3. 记录对话到记忆系统
   4. 根据对话更新情绪和用户画像
-  5. /persona 命令查看/切换人设
+  5. /persona 命令查看诺奈人设
   6. /mood 命令查看当前心情
   7. /memory 命令查看对某人的记忆
 """
@@ -37,11 +37,11 @@ from .persona_style import PersonaStyleState
 from .personalization import match_special_user, special_prompt_text
 from .random_behavior import RandomBehavior
 
-logger = logging.getLogger("alive_persona")
+logger = logging.getLogger("nne_2477_alive_persona")
 
 
 class AlivePersonaPlugin(Star):
-    """活人感人设插件 - 让你的 bot 像真人一样聊天
+    """诺奈 NNE-2477 专属活人感插件
 
     /persona - 查看当前人设信息
     /mood - 查看当前心情状态
@@ -64,10 +64,8 @@ class AlivePersonaPlugin(Star):
         self.emotion_last_seen: dict[str, float] = {}
         self.memory = MemorySystem(self.data_dir)
 
-        # 这是诺奈专属副本：启动时固定加载诺奈人设，避免旧私有人设覆盖。
-        dedicated_config = dict(config or {})
-        dedicated_config['persona_file'] = 'persona_nne_2477.json'
-        self.persona = PersonaEngine(self.data_dir, config=dedicated_config)
+        # 诺奈专属插件只加载 NNE-2477 人设。
+        self.persona = PersonaEngine(self.data_dir)
         self.living_state = LivingState()
         self.persona_style = PersonaStyleState(
             trait_anchor_rate=float(self.persona.persona.get('trait_anchor_rate', 0.35)),
@@ -95,17 +93,17 @@ class AlivePersonaPlugin(Star):
         # 设置情绪基线
         self.emotion.set_baseline(self.persona.get_emotion_baseline())
 
-        # 好感度开关 (persona.json 中设置 "enable_favorability": false 可关闭)
+        # 好感度开关 (persona_nne_2477.json 中设置 "enable_favorability": false 可关闭)
         self.enable_favorability = self.persona.persona.get('enable_favorability', True)
 
-        logger.info(f"[AlivePersona] 已加载人设: {self.persona.get_name()}")
-        logger.info(f"[AlivePersona] 好感度系统: {'开启' if self.enable_favorability else '关闭'}")
+        logger.info(f"[NNE-2477] 已加载人设: {self.persona.get_name()}")
+        logger.info(f"[NNE-2477] 好感度系统: {'开启' if self.enable_favorability else '关闭'}")
 
     async def initialize(self):
-        logger.info("[AlivePersona] 插件已激活")
+        logger.info("[NNE-2477] 插件已激活")
 
     async def terminate(self):
-        logger.info("[AlivePersona] 插件已停用")
+        logger.info("[NNE-2477] 插件已停用")
 
     # ==================== LLM 钩子 ====================
 
@@ -131,7 +129,7 @@ class AlivePersonaPlugin(Star):
             relation = self.memory.get_relation(user_id, bool(special))
             emotion.update_from_message(message_text, relation)
 
-            # 更新好感度 (可通过 persona.json 关闭)
+            # 更新好感度 (可通过 persona_nne_2477.json 关闭)
             if self.enable_favorability:
                 self._process_favorability(user_id, message_text, emotion)
 
@@ -211,7 +209,7 @@ class AlivePersonaPlugin(Star):
 
             self._append_runtime_context(request, runtime_context)
         except Exception:
-            logger.exception("[AlivePersona] LLM 请求钩子失败，已跳过本轮活人感注入")
+            logger.exception("[NNE-2477] LLM 请求钩子失败，已跳过本轮活人感注入")
 
     @register_on_llm_response()
     async def on_llm_response(self, event: AstrMessageEvent, response):
@@ -262,7 +260,7 @@ class AlivePersonaPlugin(Star):
 
             response.completion_text = modified
         except Exception:
-            logger.exception("[AlivePersona] LLM 回复后处理失败，保留原始回复")
+            logger.exception("[NNE-2477] LLM 回复后处理失败，保留原始回复")
 
     @register_after_message_sent()
     async def after_sent(self, event: AstrMessageEvent):
